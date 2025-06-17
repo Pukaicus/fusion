@@ -631,8 +631,6 @@ for filename in os.listdir(cv_folder):
         print(f"[XML] Fichier '{output_path}' généré.")
 
     # --- Début du fichier main.py ---
-    import os
-    import re
     import pdfplumber
     from docx import Document
 
@@ -692,7 +690,9 @@ for filename in os.listdir(cv_folder):
             else:
                 print(f"⚠️ Aucune info extraite de {filename}")
             print("-" * 40)
-
+            # Supprimer le fichier après traitement
+            os.remove(path)
+            print(f"🗑️ Fichier supprimé : {filename}")
 
     if __name__ == "__main__":
         main()
