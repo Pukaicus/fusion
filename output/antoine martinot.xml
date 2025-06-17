@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CV>
+  <Identite>
+    <Nom>MARTINOT</Nom>
+    <Prenom>Antoine</Prenom>
+    <Email>a.martinot@mail.com</Email>
+    <Telephone>06 66 66 66 66</Telephone>
+    <Adresse />
+  </Identite><Competences>
+    <Competence>automatisation</Competence>
+    <Competence>industrielle</Competence>
+    <Competence>gestion</Competence>
+    <Competence>projets</Competence>
+    <Competence>matlab</Competence>
+    <Competence>solidworks</Competence>
+    <Competence>simulink</Competence>
+  </Competences><Langues>
+    <Langue niveau="DÉBUTANT">Espagnol</Langue>
+  </Langues><Experiences>
+    <Experience>
+      <Poste>Ingénieur commercial en automatisation industrielle</Poste>
+      <Entreprise>TechAutomate</Entreprise>
+      <Debut />
+      <Fin />
+      <Description>+ Gestion d'un portefeuille clients dans le secteur de l'automatisation industrielle. + Analyse des besoins clients, proposition de solutions techniques adaptées et négociation des contrats. + Coordination avec l'équipe technique pour assurer la mise en œuvre réussie des projets. + Rédaction de rapports techniques et présentation des résultats devant l'équipe de recherche.</Description>
+    </Experience><Experience>
+      <Poste>Ingénieur Support Technique</Poste>
+      <Entreprise>Société TechnoSolution</Entreprise>
+      <Debut />
+      <Fin />
+      <Description>&lt; Fourniture d'un support technique de haut niveau aux clients, résolution de problèmes complexes et gestion des escalades. + Formation des clients sur l'utilisation efficace des produits et logiciels de l'entreprise. + Collaboration étroite avec l'équipe de développement pour identifier et corriger les problèmes de produits.</Description>
+    </Experience><Experience>
+      <Poste>Diplôme d'Ingénieur en Génie Électrique</Poste>
+      <Entreprise>École Nationale Supérieure d'Ingénieurs (ENSI)</Entreprise>
+      <Debut>Juin 2020</Debut>
+      <Fin />
+      <Description>Juin 2020, , Far Baccalauréat Scientifique Lycée Victor Hugo 20173 - Juin 2015,, Paris - Francs</Description>
+    </Experience>
+  </Experiences><Formations>
+    <Formation>
+      <Diplome>Diplôme d'Ingénieur en Génie Électrique</Diplome>
+      <Etablissement>École Nationale Supérieure d'Ingénieurs (ENSI)</Etablissement>
+      <Annee />
+    </Formation><Formation>
+      <Diplome>École Nationale Supérieure d'Ingénieurs (ENSI)</Diplome>
+      <Etablissement />
+      <Annee />
+    </Formation><Formation>
+      <Diplome>Baccalauréat Scientifique</Diplome>
+      <Etablissement>Lycée Victor Hugo</Etablissement>
+      <Annee />
+    </Formation>
+  </Formations>
+</CV>

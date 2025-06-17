@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<CV>
+  <Identite>
+    <Nom>NOM</Nom>
+    <Prenom>Prénom</Prenom>
+    <Email>dubois@email.com</Email>
+    <Telephone>0612345678</Telephone>
+    <Adresse>123 Rue des Exemples, 75001 pourvoir</Adresse>
+  </Identite><Competences>
+    <Competence>optimiser</Competence>
+    <Competence>process</Competence>
+    <Competence>recrutement</Competence>
+    <Competence>gestion</Competence>
+    <Competence>paie</Competence>
+    <Competence>gestion</Competence>
+    <Competence>conflits</Competence>
+    <Competence>organisationnelle</Competence>
+    <Competence>communication</Competence>
+    <Competence>stratégie</Competence>
+    <Competence>gestion</Competence>
+    <Competence>administrative</Competence>
+    <Competence>réalisé</Competence>
+    <Competence>cvcreaifr</Competence>
+  </Competences><Langues>
+    <Langue niveau="INTERMÉDIAIRE">Allemand</Langue>
+    <Langue niveau="COURANT">Anglais</Langue>
+  </Langues><Experiences>
+    <Experience>
+      <Poste>U 0612345678 Sept. 2021 - Mars. 2023 Chargé de Recrutement</Poste>
+      <Entreprise>jeanne. dubois@email.com ;</Entreprise>
+      <Debut>U 0612</Debut>
+      <Fin />
+      <Description>= + Conduite de campagnes de recrutement, réussissant à 123 Rue des Exemples, 75001 pourvoir 95% des postes dans les délais impartis, Paris, France + Création de partenariats avec des universités et des 35 ans écoles de commerce, augmentant le vivier de talents de + Mise en place de tableaux de bord RH pour suivre les</Description>
+    </Experience>
+  </Experiences><Formations>
+    <Formation>
+      <Diplome>PP Master en Management des Ressources Humaines |</Diplome>
+      <Etablissement>Allemand | Intermédiaire</Etablissement>
+      <Annee />
+    </Formation><Formation>
+      <Diplome>° à Licence en Psychologie |</Diplome>
+      <Etablissement />
+      <Annee />
+    </Formation>
+  </Formations>
+</CV>
