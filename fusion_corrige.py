@@ -19,14 +19,82 @@ def ocr_cv(chemin_pdf):
 
 def extraire_infos(text):
     infos = {
-        "prenom": "Prénom",
-        "nom": "NOM",
-        "adresse": "",
-        "competences": [],
-        "langues": [],
-        "experiences": [],
-        "formations": []
+        "prenom": "", "nom": "", "email": "", "telephone": "",
+        "adresse": "", "competences": [], "langues": [],
+        "experiences": [], "formations": []
     }
+
+    infos["prenom"], infos["nom"] = extract_prenom_nom(text)
+    infos["email"], infos["telephone"] = extract_email_tel(text)
+    infos["adresse"] = extract_adresse(text)
+    infos["competences"] = extract_competences(text)
+    infos["langues"] = extract_langues(text)
+    infos["experiences"] = extract_experiences(text)
+    infos["formations"] = extract_formations(text)
+
+    return infos
+def extract_prenom_nom(text):
+    lignes = text.strip().splitlines()
+    for ligne in lignes:
+        mots = ligne.strip().split()
+        if len(mots) >= 2 and mots[0][0].isupper() and mots[1][0].isupper():
+            return mots[0], mots[1]
+    return "", ""
+
+import re
+
+def extract_email_tel(text):
+    email_match = re.search(r"[\w\.-]+@[\w\.-]+", text)
+    tel_match = re.search(r"(0|\+33)[1-9](\s?\d{2}){4}", text)
+    email = email_match.group() if email_match else ""
+    tel = tel_match.group() if tel_match else ""
+    return email, tel
+
+def extract_adresse(text):
+    lignes = text.strip().splitlines()
+    for ligne in lignes:
+        if any(mot in ligne.lower() for mot in ["rue", "avenue", "boulevard", "impasse", "chemin", "allée"]):
+            return ligne.strip()
+    return ""
+
+def extract_competences(text):
+    competences = []
+    lignes = text.strip().splitlines()
+    for ligne in lignes:
+        if "-" in ligne or "•" in ligne:
+            ligne = ligne.replace("•", "-")
+            mots = ligne.split("-")
+            for mot in mots:
+                mot_clean = mot.strip()
+                if 2 < len(mot_clean) < 50:
+                    competences.append(mot_clean)
+    return list(set(competences))  # supprime les doublons
+
+def extract_langues(text):
+    langues = []
+    lignes = text.strip().splitlines()
+    for ligne in lignes:
+        match = re.search(r"(anglais|français|espagnol|allemand|italien)[^\n]*(A1|A2|B1|B2|C1|C2)", ligne, re.I)
+        if match:
+            langues.append({"langue": match.group(1).capitalize(), "niveau": match.group(2)})
+    return langues
+
+def extract_experiences(text):
+    experiences = []
+    blocs = text.split("\n\n")
+    for bloc in blocs:
+        if re.search(r"(stage|CDD|CDI|freelance|alternance|intérim)", bloc, re.I) or re.search(r"\b\d{4}\b", bloc):
+            experiences.append(bloc.strip())
+    return experiences
+
+def extract_formations(text):
+    formations = []
+    blocs = text.split("\n\n")
+    for bloc in blocs:
+        if re.search(r"(BAC|BTS|DUT|Licence|Master|Doctorat)", bloc, re.I):
+            formations.append(bloc.strip())
+    return formations
+
 
     lignes = text.strip().splitlines()
 
@@ -266,55 +334,76 @@ def extraire_infos(text):
     return infos
 
 
-def exporter_vers_xml(infos, dossier_output):
+def exporter_vers_xml(infos, chemin_fichier):
     from xml.etree.ElementTree import Element, SubElement, ElementTree
 
     racine = Element("CV")
-    identite = SubElement(racine, "Identite")
-    SubElement(identite, "Prenom").text = infos["prenom"]
-    SubElement(identite, "Nom").text = infos["nom"]
-    SubElement(identite, "Adresse").text = infos["adresse"]
 
-    comp = SubElement(racine, "Competences")
+    # Identité
+    idf = SubElement(racine, "Identite")
+    SubElement(idf, "Prenom").text = infos["prenom"]
+    SubElement(idf, "Nom").text = infos["nom"]
+    SubElement(idf, "Email").text = infos["email"]
+    SubElement(idf, "Telephone").text = infos["telephone"]
+    SubElement(idf, "Adresse").text = infos["adresse"]
+
+    # Compétences
+    comps = SubElement(racine, "Competences")
     for mot in infos["competences"]:
-        SubElement(comp, "MotCle").text = mot
+        SubElement(comps, "MotCle").text = mot
 
-    langues = SubElement(racine, "Langues")
-    for langue in infos["langues"]:
-        l = SubElement(langues, "Langue")
-        SubElement(l, "Nom").text = langue["langue"]
-        SubElement(l, "Niveau").text = langue["niveau"]
+    # Langues
+    langs = SubElement(racine, "Langues")
+    for lg in infos["langues"]:
+        l = SubElement(langs, "Langue")
+        SubElement(l, "Nom").text = lg.get("langue", "")
+        SubElement(l, "Niveau").text = lg.get("niveau", "")
+
+    # Expériences
+    exps = SubElement(racine, "Experiences")
+    for exp in infos["experiences"]:
+        e = SubElement(exps, "Experience")
+        SubElement(e, "Poste").text = exp["poste"]
+        SubElement(e, "Entreprise").text = exp["entreprise"]
+        SubElement(e, "Debut").text = exp["debut"]
+        SubElement(e, "Fin").text = exp["fin"]
+        SubElement(e, "Description").text = exp["description"]
+
+    # Formations
+    forms = SubElement(racine, "Formations")
+    for f in infos["formations"]:
+        fo = SubElement(forms, "Formation")
+        SubElement(fo, "Diplome").text = f["diplome"]
+        SubElement(fo, "Etablissement").text = f["etablissement"]
+        SubElement(fo, "Annee").text = f["annee"]
 
     tree = ElementTree(racine)
-    tree.write(dossier_output, encoding="utf-8", xml_declaration=True)
+    tree.write(chemin_fichier, encoding="utf-8", xml_declaration=True)
 
 
-
-
+import os
 
 def main():
     dossier_cv = "D:/Monprojet_installation/cv"
     dossier_output = "D:/Monprojet_installation/output"
+    os.makedirs(dossier_output, exist_ok=True)
 
-    if not os.path.exists(dossier_output):
-        os.makedirs(dossier_output)
+    for fichier in os.listdir(dossier_cv):
+        if not fichier.lower().endswith(".pdf"):
+            continue
 
-    fichiers_pdf = [f for f in os.listdir(dossier_cv) if f.lower().endswith(".pdf")]
-
-    if not fichiers_pdf:
-        print("⚠️ Aucun fichier PDF trouvé dans le dossier cv.")
-        return
-
-    for fichier in fichiers_pdf:
         chemin_pdf = os.path.join(dossier_cv, fichier)
         texte = ocr_cv(chemin_pdf)
         infos = extraire_infos(texte)
+
         nom_xml = os.path.splitext(fichier)[0] + ".xml"
         chemin_xml = os.path.join(dossier_output, nom_xml)
         exporter_vers_xml(infos, chemin_xml)
-        print(f"✅ Fichier traité : {fichier} → XML généré : {chemin_xml}")
 
-    print("\n🎉 Traitement terminé pour tous les fichiers PDF.")
+        print(f"✅ {fichier} → {nom_xml}")
+
+    print("🎉 Tous les CV ont été traités.")
+
 
 
 
