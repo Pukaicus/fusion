@@ -11,93 +11,29 @@ poppler_path = r"D:/Monprojet_installation/poppler-24.08.0/Library/bin"
 
 
 def ocr_cv(chemin_pdf):
-    texte_global = ""
     images = convert_from_path(chemin_pdf, poppler_path=poppler_path)
-    for image in images:
-        texte_global += pytesseract.image_to_string(image, lang='fra') + "\n"
-    return texte_global
+    texte = ""
+    for img in images:
+        texte += pytesseract.image_to_string(img, lang="fra") + "\n"
+    return texte
 
-def extraire_infos(text):
+def extract_info_detaille(text):
     infos = {
-        "prenom": "", "nom": "", "email": "", "telephone": "",
-        "adresse": "", "competences": [], "langues": [],
-        "experiences": [], "formations": []
+        "nom": "", 
+        "prenom": "",   
+        "email": extract_email(text) or "",
+        "telephone": extract_phone(text) or "",
+        "adresse": extract_adresse(text) or "",
+        "competences": extract_competences(text) or [],
+        "langues": extract_langues(text) or [],
+        "experiences": extract_experiences(text) or [],
+        "formations": extract_formations(text) or []
     }
 
-    infos["prenom"], infos["nom"] = extract_prenom_nom(text)
-    infos["email"], infos["telephone"] = extract_email_tel(text)
-    infos["adresse"] = extract_adresse(text)
-    infos["competences"] = extract_competences(text)
-    infos["langues"] = extract_langues(text)
-    infos["experiences"] = extract_experiences(text)
-    infos["formations"] = extract_formations(text)
-
-    return infos
-def extract_prenom_nom(text):
+    print("infos =", infos)  # Ici OK, infos bien défini
+    
     lignes = text.strip().splitlines()
-    for ligne in lignes:
-        mots = ligne.strip().split()
-        if len(mots) >= 2 and mots[0][0].isupper() and mots[1][0].isupper():
-            return mots[0], mots[1]
-    return "", ""
-
-import re
-
-def extract_email_tel(text):
-    email_match = re.search(r"[\w\.-]+@[\w\.-]+", text)
-    tel_match = re.search(r"(0|\+33)[1-9](\s?\d{2}){4}", text)
-    email = email_match.group() if email_match else ""
-    tel = tel_match.group() if tel_match else ""
-    return email, tel
-
-def extract_adresse(text):
-    lignes = text.strip().splitlines()
-    for ligne in lignes:
-        if any(mot in ligne.lower() for mot in ["rue", "avenue", "boulevard", "impasse", "chemin", "allée"]):
-            return ligne.strip()
-    return ""
-
-def extract_competences(text):
-    competences = []
-    lignes = text.strip().splitlines()
-    for ligne in lignes:
-        if "-" in ligne or "•" in ligne:
-            ligne = ligne.replace("•", "-")
-            mots = ligne.split("-")
-            for mot in mots:
-                mot_clean = mot.strip()
-                if 2 < len(mot_clean) < 50:
-                    competences.append(mot_clean)
-    return list(set(competences))  # supprime les doublons
-
-def extract_langues(text):
-    langues = []
-    lignes = text.strip().splitlines()
-    for ligne in lignes:
-        match = re.search(r"(anglais|français|espagnol|allemand|italien)[^\n]*(A1|A2|B1|B2|C1|C2)", ligne, re.I)
-        if match:
-            langues.append({"langue": match.group(1).capitalize(), "niveau": match.group(2)})
-    return langues
-
-def extract_experiences(text):
-    experiences = []
-    blocs = text.split("\n\n")
-    for bloc in blocs:
-        if re.search(r"(stage|CDD|CDI|freelance|alternance|intérim)", bloc, re.I) or re.search(r"\b\d{4}\b", bloc):
-            experiences.append(bloc.strip())
-    return experiences
-
-def extract_formations(text):
-    formations = []
-    blocs = text.split("\n\n")
-    for bloc in blocs:
-        if re.search(r"(BAC|BTS|DUT|Licence|Master|Doctorat)", bloc, re.I):
-            formations.append(bloc.strip())
-    return formations
-
-
-    lignes = text.strip().splitlines()
-
+    
     blacklist = ["expériences", "professionnelles", "formations", "contact", "langues", "adresse", "compétences", "parcours", "curriculum", "vitae"]
 
     # 1. Chercher 2 mots dont 1 est tout en maj et l'autre capitalisé
@@ -329,10 +265,96 @@ def extract_formations(text):
                     "etablissement": etablissement,
                     "annee": annee
                 })
+                
+def extract_email(text):
+    if not text:
+        return None
+    match = re.search(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+", text)
+    return match.group() if match else None
 
+def extract_phone(text):
+    if not text:
+        return None
+    match = re.search(r"(?:\+33|0)[1-9](?:[\s.-]?\d{2}){4}", text)
+    return match.group() if match else None
 
-    return infos
+def extract_name(text):
+    if not text:
+        return "Nom Prénom Inconnu"
+    lines = text.strip().split("\n")
+    for line in lines[:10]:
+        line_clean = line.strip()
+        if not line_clean:
+            continue
+        if line_clean.isupper():
+            continue
+        words = line_clean.split()
+        # Vérifie que chaque mot commence par une majuscule
+        if 2 <= len(words) <= 3 and all(w[0].isupper() for w in words if w.isalpha()):
+            return line_clean
+    return "Nom Prénom Inconnu"
 
+def extract_prenom_nom(text):
+    lignes = text.strip().splitlines()
+    for ligne in lignes:
+        mots = ligne.strip().split()
+        if len(mots) >= 2 and mots[0][0].isupper() and mots[1][0].isupper():
+            return mots[0], mots[1]
+    return "", ""
+
+import re
+
+def extract_email_tel(text):
+    email_match = re.search(r"[\w\.-]+@[\w\.-]+", text)
+    tel_match = re.search(r"(0|\+33)[1-9](\s?\d{2}){4}", text)
+    email = email_match.group() if email_match else ""
+    tel = tel_match.group() if tel_match else ""
+    return email, tel
+
+def extract_adresse(text):
+    lignes = text.strip().splitlines()
+    for ligne in lignes:
+        if any(mot in ligne.lower() for mot in ["rue", "avenue", "boulevard", "impasse", "chemin", "allée"]):
+            return ligne.strip()
+    return ""
+
+def extract_competences(text):
+    competences = []
+    lignes = text.strip().splitlines()
+    for ligne in lignes:
+        if "-" in ligne or "•" in ligne:
+            ligne = ligne.replace("•", "-")
+            mots = ligne.split("-")
+            for mot in mots:
+                mot_clean = mot.strip()
+                if 2 < len(mot_clean) < 50:
+                    competences.append(mot_clean)
+    return list(set(competences))  # supprime les doublons
+
+def extract_langues(text):
+    langues = []
+    lignes = text.strip().splitlines()
+    for ligne in lignes:
+        match = re.search(r"(anglais|français|espagnol|allemand|italien)[^\n]*(A1|A2|B1|B2|C1|C2)", ligne, re.I)
+        if match:
+            langues.append({"langue": match.group(1).capitalize(), "niveau": match.group(2)})
+    return langues
+
+def extract_experiences(text):
+    experiences = []
+    blocs = text.split("\n\n")
+    for bloc in blocs:
+        if re.search(r"(stage|CDD|CDI|freelance|alternance|intérim)", bloc, re.I) or re.search(r"\b\d{4}\b", bloc):
+            experiences.append(bloc.strip())
+    return experiences
+
+def extract_formations(text):
+    formations = []
+    blocs = text.split("\n\n")
+    for bloc in blocs:
+        if re.search(r"(BAC|BTS|DUT|Licence|Master|Doctorat)", bloc, re.I):
+            formations.append(bloc.strip())
+    return formations
 
 def exporter_vers_xml(infos, chemin_fichier):
     from xml.etree.ElementTree import Element, SubElement, ElementTree
@@ -394,18 +416,15 @@ def main():
 
         chemin_pdf = os.path.join(dossier_cv, fichier)
         texte = ocr_cv(chemin_pdf)
-        infos = extraire_infos(texte)
+        infos = extract_info_detaille(texte)
 
         nom_xml = os.path.splitext(fichier)[0] + ".xml"
         chemin_xml = os.path.join(dossier_output, nom_xml)
         exporter_vers_xml(infos, chemin_xml)
-
+        
         print(f"✅ {fichier} → {nom_xml}")
 
     print("🎉 Tous les CV ont été traités.")
-
-
-
 
 if __name__ == "__main__":
     main()
