@@ -1,0 +1,26 @@
+école
+collège
+université
+académie
+faculté
+institut
+école polytechnique
+polytechnique
+CPGE
+classe préparatoire
+lycée
+lycée professionnel
+lycée technique
+lycée général
+baccalauréat
+bts
+licence
+master
+doctorat
+diplôme
+certificat
+formation
+cours
+stages
+séminaire
+atelier

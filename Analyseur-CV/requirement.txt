@@ -1,0 +1,3 @@
+nltk
+pdfminer
+pdfminer.six

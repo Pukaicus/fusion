@@ -1,0 +1,38 @@
+machine learning
+data science
+python
+word
+excel
+English
+html
+css
+java
+c
+c++
+javascript
+php
+sql
+nosql
+django
+flask
+nodejs
+reactjs
+angular
+vuejs
+ruby
+rails
+swift
+objective c
+android
+ios
+git
+laravel
+aws
+css
+sass
+wordpress
+drupal
+jquery
+bootstrap
+mysql
+mongodb
